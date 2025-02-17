@@ -1,55 +1,134 @@
-name: CI
-
+name: AWS ML Pipeline
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install .
-          pip install -r tests-requirements.txt
-      - name: Linter
-        run: |
-          pylama
-      - name: Typer checker
-        run: |
-          mypy . --ignore-missing-imports
-
-
   build:
-    runs-on: ubuntu-latest # Latest version supporting Python 3.6
-
-    strategy:
-      matrix:
-        python-version: [3.7, 3.8, 3.9]
-
+    runs-on: ubuntu-latest
     steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          task: start-measurement
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: |
-          pip install --upgrade pip
+        run: 'pip install --upgrade pip
+
           pip install .
+
           pip install -r tests-requirements.txt
+
           pip install tensorflow-io[tensorflow]
+
           pip install torch
+
           pip install webdataset
+
+          '
+      - id: measurement-4
+        name: Record Measurement After Install dependencies
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Install dependencies
+          task: get-measurement
       - name: Tests
-        run: |
-          pytest -s tests
+        run: 'pytest -s tests
+
+          '
+      - id: measurement-6
+        name: Record Measurement After Tests
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Tests
+          task: get-measurement
+      - id: display-measurement
+        name: Display Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          task: display-results
+      - name: Save Total Energy Consumption Data
+        run: echo '${{ steps.final-measurement.outputs.data-total-json }}' > total_energy_consumption.json
+      - name: Upload Energy Consumption Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: total-energy-consumption
+          path: total_energy_consumption.json
+    strategy:
+      matrix:
+        python-version:
+          - 3.7
+          - 3.8
+          - 3.9
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          task: start-measurement
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: 'pip install --upgrade pip
+
+          pip install .
+
+          pip install -r tests-requirements.txt
+
+          '
+      - id: measurement-4
+        name: Record Measurement After Install dependencies
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Install dependencies
+          task: get-measurement
+      - name: Linter
+        run: 'pylama
+
+          '
+      - id: measurement-6
+        name: Record Measurement After Linter
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Linter
+          task: get-measurement
+      - name: Typer checker
+        run: 'mypy . --ignore-missing-imports
+
+          '
+      - id: measurement-8
+        name: Record Measurement After Typer checker
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Typer checker
+          task: get-measurement
+      - id: display-measurement
+        name: Display Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          task: display-results
+      - name: Save Total Energy Consumption Data
+        run: echo '${{ steps.final-measurement.outputs.data-total-json }}' > total_energy_consumption.json
+      - name: Upload Energy Consumption Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: total-energy-consumption
+          path: total_energy_consumption.json
