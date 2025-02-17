@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,7 +20,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: 'pip install --upgrade pip
+        run: "pip install --upgrade pip
 
           pip install .
 
@@ -31,7 +32,7 @@ jobs:
 
           pip install webdataset
 
-          '
+          "
       - id: measurement-4
         name: Record Measurement After Install dependencies
         uses: green-coding-solutions/eco-ci-energy-estimation@v4
@@ -40,9 +41,9 @@ jobs:
           label: Install dependencies
           task: get-measurement
       - name: Tests
-        run: 'pytest -s tests
+        run: "pytest -s tests
 
-          '
+          "
       - id: measurement-6
         name: Record Measurement After Tests
         uses: green-coding-solutions/eco-ci-energy-estimation@v4
@@ -83,13 +84,13 @@ jobs:
         with:
           python-version: 3.9
       - name: Install dependencies
-        run: 'pip install --upgrade pip
+        run: "pip install --upgrade pip
 
           pip install .
 
           pip install -r tests-requirements.txt
 
-          '
+          "
       - id: measurement-4
         name: Record Measurement After Install dependencies
         uses: green-coding-solutions/eco-ci-energy-estimation@v4
@@ -98,9 +99,9 @@ jobs:
           label: Install dependencies
           task: get-measurement
       - name: Linter
-        run: 'pylama
+        run: "pylama
 
-          '
+          "
       - id: measurement-6
         name: Record Measurement After Linter
         uses: green-coding-solutions/eco-ci-energy-estimation@v4
@@ -109,9 +110,9 @@ jobs:
           label: Linter
           task: get-measurement
       - name: Typer checker
-        run: 'mypy . --ignore-missing-imports
+        run: "mypy . --ignore-missing-imports
 
-          '
+          "
       - id: measurement-8
         name: Record Measurement After Typer checker
         uses: green-coding-solutions/eco-ci-energy-estimation@v4
