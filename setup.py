@@ -28,7 +28,6 @@ CLASSIFIERS = [
     "Environment :: Console",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Topic :: Software Development :: Libraries"
@@ -54,7 +53,7 @@ setuptools.setup(
         "cpu": ["tensorflow-io[tensorflow]>=0.8.0"],
         "gpu": ["tensorflow-io[tensorflow]>=0.8.0"],
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 
     maintainer="Criteo",
     maintainer_email="github@criteo.com",
